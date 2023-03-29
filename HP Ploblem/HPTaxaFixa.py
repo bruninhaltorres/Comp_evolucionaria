@@ -73,3 +73,6 @@ def genetic_algorithm():
 
 # Execução do algoritmo
 genetic_algorithm()
+
+
+# A seleção de torneio seleciona dois indivíduos aleatórios da população e escolhe o mais apto entre eles para ser o pai ou a mãe. Com essa abordagem, é garantido que o pai e a mãe sejam diferentes. Além disso, a seleção de torneio torna a função de seleção mais eficiente, pois ela é executada apenas duas vezes por indivíduo.

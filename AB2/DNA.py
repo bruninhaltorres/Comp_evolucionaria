@@ -5,6 +5,7 @@ GERACAO = 100
 N_POPULACAO = 500
 TAXA_MUTACAO = 0.1
 
+# codificação do cromossomo: lista com cadeia de caracteres
 DNAs = [
     'ATG', 'ATC', 'ATGC'
 ]
@@ -44,7 +45,7 @@ class Individuo:
         return fitness
 
 
-def crossover(pai, mae): 
+def crossover(pai, mae): # cruzamento uniforme
     filho = Individuo()
     sequencia_gerada = []
 
@@ -60,7 +61,7 @@ def crossover(pai, mae):
     return filho
 
 
-def mutacao(novo):
+def mutacao(novo): # mutação por inserção - criamos uma sequencia de hifens e depois embaralhamos com a cadeia de caracteres
     nova_sequencias = []
 
     for seq in novo.sequencias:

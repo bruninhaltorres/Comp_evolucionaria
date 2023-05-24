@@ -50,7 +50,7 @@ class Individual:
     self.chromosome = self.InitializeChromosome()
     self.fitness_score = self.fitness()
 
-  def InitializeChromosome(self):
+  def InitializeChromosome(self): # codificação do cromossomo: lista de tamanho 4. dois primeiros elementos representam as características relacionadas à rede GSM (voz e dados) e os dois últimos elementos representam as características relacionadas à rede WCDMA (voz e dados).
     GSMvoice = random.uniform(GSM_VOICE_LIMITS[0], GSM_VOICE_LIMITS[1])
     GSMdata = random.uniform(GSM_DATA_LIMITS[0], GSM_DATA_LIMITS[1])
     
@@ -60,17 +60,22 @@ class Individual:
     return [80, 120, 15, 50]
 
   def fitness(self):
+    # pega os respectivos números de voz e dados
     voices = self.chromosome[0:2]
     data = self.chromosome[2:4]
-
+    
+    #soma as duas posições de cada (voz e dados)
     userVoices = GetUserVoices(voices)
     userData = GetUserData(data)
-
+    
+    #faz o custo de voz e custo de dados (esses cálculos são utilizando fórmulas do tcc)
     costGSM = GetGSMCost(voices[0], data[0])
     costWCDMA = GetWCDMACost(voices[1], data[1])
 
+    #faz o cálculo do custo total também utilizando funções do tcc
     cost = GetCost(userVoices, userData, costGSM, costWCDMA)
-
+    
+    #quanto menor o fitness, melhor
     return cost
 
   def IsValid(self):
@@ -86,6 +91,7 @@ class Individual:
     return True
 
 def Crossover(parent1, parent2):
+  # cruzamento aritmético - itero em cada posição do pai, e aquela posição do filho vai ser a média do pai e da mãe na mesma posição
   child = Individual()
   for i in range(0, CHROMOSOME_LENGHT):
     child.chromosome[i] = (parent1.chromosome[i] + parent2.chromosome[i]) / 2
@@ -93,13 +99,14 @@ def Crossover(parent1, parent2):
   return child
 
 def Mutation(individual):
+  # mutação gaussiana - itero sobre cada posição e se ela for menor que a taxa de mutação eu pego um número gaussiano e somo a ela
   for i in range(0, CHROMOSOME_LENGHT):
     if random.random() < MUTATION_RATE:
       individual.chromosome[i] += random.gauss(-MUTATION_RANGE, MUTATION_RANGE)
 
   return individual
 
-def GeneratePopulation():
+def GeneratePopulation(): # vou gerando indivíduos aleatórios de acordo com o número da POPULATION_SIZE
   population = []
 
   while len(population) <= POPULATION_SIZE:
@@ -120,7 +127,7 @@ def roulette_selection():
   return random.choices(population, probabilities, k=2)
 
 # Evolutionary Algorithm
-def Evolve():
+def Evolve(): # gero filhos pelo métod da roleta, depois aplico o cruzamento, mutação e seleciono os individuos mais aptos até que eu encontre o custo que quero ou que o número de gerações esgote
   global population, currentGeneration, bestFitnessOfEachGeneration
 
   while population[0].fitness_score >= DESIRED_COST and currentGeneration < TOTAL_GENERATIONS:

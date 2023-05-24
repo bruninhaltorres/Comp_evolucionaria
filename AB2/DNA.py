@@ -10,7 +10,7 @@ DNAs = [
     'ATG', 'ATC', 'ATGC'
 ]
 
-class Individuo:
+class Individuo: # Cada indivíduo possui uma sequência de DNA, seu fitness (avaliação da qualidade da sequência) e os métodos para gerar a sequência e calcular o fitness.
     def __init__(self):
         self.sequencias = self.gerar_sequencias()
         self.fitness = self.calcular_fitness()
@@ -45,7 +45,7 @@ class Individuo:
         return fitness
 
 
-def crossover(pai, mae): # cruzamento uniforme
+def crossover(pai, mae): # cruzamento uniforme onde é escolhido aleatoriamente as sequências de DNA dos pais para compor a sequência do filho.
     filho = Individuo()
     sequencia_gerada = []
 

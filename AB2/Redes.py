@@ -26,26 +26,27 @@ currentGeneration = 1
 
 bestFitnessOfEachGeneration = []
 
-def GetUserVoices(voices):
+def GetUserVoices(voices): # Calcula o percentual de uso das vozes
   totalVoices = sum(voices)
 
   return 1 - (totalVoices / 275)
 
-def GetUserData(data):
+def GetUserData(data): # Calcula o percentual de uso dos dados
   totalData = sum(data)
   
   return 1 - (totalData / 110)
 
-def GetGSMCost(voice, data):
+def GetGSMCost(voice, data): #  Calcula o custo para o uso da rede GSM com base nos valores de voz e dados fornecidos.
   return abs(- 30 + data + 6/25*voice)
 
-def GetWCDMACost(voice, data):
+def GetWCDMACost(voice, data): # Calcula o custo para o uso da rede WCDMA com base nos valores de voz e dados fornecidos. 
   return abs(-80 + data + 8/15*voice)
 
-def GetCost(userVoice, userData, costGSM, costWCDMA):
+def GetCost(userVoice, userData, costGSM, costWCDMA): #  Calcula o custo total levando em consideração os custos e valores
   return (pow(costGSM, 2) + pow(costWCDMA, 2)) * userVoice * userData
 
-class Individual:
+class Individual: # Cada indivíduo vai possuir um cromossomo (representado como uma lista de 4 valores), bem como um valor de aptidão (fitness_score) calculado com base em seu cromossomo.
+  
   def __init__(self):
     self.chromosome = self.InitializeChromosome()
     self.fitness_score = self.fitness()
@@ -90,16 +91,15 @@ class Individual:
 
     return True
 
-def Crossover(parent1, parent2):
-  # cruzamento aritmético - itero em cada posição do pai, e aquela posição do filho vai ser a média do pai e da mãe na mesma posição
+def Crossover(parent1, parent2): # Cruzamento aritmético. Durante o cruzamento entre dois pais, cada posição do cromossomo do filho resultante é calculada como a média aritmética dos valores correspondentes nos cromossomos dos pais.
+
   child = Individual()
   for i in range(0, CHROMOSOME_LENGHT):
     child.chromosome[i] = (parent1.chromosome[i] + parent2.chromosome[i]) / 2
 
   return child
 
-def Mutation(individual):
-  # mutação gaussiana - itero sobre cada posição e se ela for menor que a taxa de mutação eu pego um número gaussiano e somo a ela
+def Mutation(individual): # Mutação gaussiana. Em cada posição do cromossomo de um indivíduo, a mutação ocorre com uma probabilidade determinada pela taxa de mutação (MUTATION_RATE), ou seja, itero sobre cada posição e se ela for menor que a taxa de mutação eu pego um número gaussiano e somo a ela
   for i in range(0, CHROMOSOME_LENGHT):
     if random.random() < MUTATION_RATE:
       individual.chromosome[i] += random.gauss(-MUTATION_RANGE, MUTATION_RANGE)
@@ -117,7 +117,7 @@ def GeneratePopulation(): # vou gerando indivíduos aleatórios de acordo com o 
 
   return population
 
-def roulette_selection():
+def roulette_selection(): # Realiza a seleção de pais através do método da roleta. A probabilidade de seleção de cada indivíduo é proporcional à sua aptidão.
   global population
 
   total_fitness = sum(1/individual.fitness_score for individual in population)
@@ -126,8 +126,7 @@ def roulette_selection():
 
   return random.choices(population, probabilities, k=2)
 
-# Evolutionary Algorithm
-def Evolve(): # gero filhos pelo métod da roleta, depois aplico o cruzamento, mutação e seleciono os individuos mais aptos até que eu encontre o custo que quero ou que o número de gerações esgote
+def Evolve(): # gero filhos pelo método da roleta, depois aplico o cruzamento, mutação e seleciono os individuos mais aptos até que eu encontre o custo que quero ou que o número de gerações esgote
   global population, currentGeneration, bestFitnessOfEachGeneration
 
   while population[0].fitness_score >= DESIRED_COST and currentGeneration < TOTAL_GENERATIONS:
@@ -148,7 +147,7 @@ def Evolve(): # gero filhos pelo métod da roleta, depois aplico o cruzamento, m
     bestFitnessOfEachGeneration.append(population[0].fitness_score)
     currentGeneration += 1
 
-def PrintBestIndividual():
+def PrintBestIndividual(): # Imprime o melhor indivíduo encontrado.
   global population, currentGeneration
 
   bestIndividual = population[0]
@@ -156,7 +155,7 @@ def PrintBestIndividual():
   print("Fitness: ", "%.8f" % bestIndividual.fitness_score)
   print("Current Generation: ", currentGeneration, "\n")
 
-def AccessNetworkSelection():
+def AccessNetworkSelection(): # Função principal que coordena a execução do algoritmo genético.
   global population, currentGeneration, bestFitnessOfEachGeneration
   
   population = GeneratePopulation()
